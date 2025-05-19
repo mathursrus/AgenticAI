@@ -4,12 +4,3 @@ curl -X POST http://localhost:7071/api/SpecInformationGatherer -H "Content-Type:
 curl -X POST http://localhost:7071/api/SpecUpdater -H "Content-Type: application/json" -d @updater_validation_input.json
 curl -X POST http://localhost:7071/api/SpecReviewer -F "spec=@Test_Spec.docx"
 curl -X POST http://localhost:7071/api/SpecOrchestrator -H "Content-Type: application/json" -d "{\"artifact\": \"This is the artifact content.\", \"text\": \"This is the text content.\"}"
-
-
-curl -X POST https://specwriterfunc123.azurewebsites.net/api/specwriter -H "Content-Type: application/json" -d @writer_validation_input.json
-curl -X POST https://specwriterfunc123.azurewebsites.net/api/specreviewer -H "Content-Type: application/json" -d @reviewer_validation_input.json
-curl -X POST https://specwriterfunc123.azurewebsites.net/api/specinformationgatherer -H "Content-Type: application/json" -d @gatherer_validation_input.json
-curl -X POST https://specwriterfunc123.azurewebsites.net/api/specupdater -H "Content-Type: application/json" -d @updater_validation_input.json
-curl -X POST https://specwriterfunc123.azurewebsites.net/api/specreviewer -F "spec=@Test_Spec.docx"
-curl -X POST https://specwriterfunc123.azurewebsites.net/api/specorchestrator -H "Content-Type: application/json" -d '{"artifact": "This is the artifact content.", "text": "This is the text content."}'
-
