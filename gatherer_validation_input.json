@@ -1,0 +1,20 @@
+{
+  "spec": "**1. Name of the spec:** AI Chat Search Integration with Outlook and Teams\n\n**2. Objective:** Improve search speed and accuracy in Outlook because it is a pain point for users that they complain about regularly.\n\n**3. Key Result:** Improve user experience by X%.",
+  "feedback": [
+    {
+      "section": "Key Result",
+      "feedback": "Contains placeholder X%",
+      "suggestion": "Replace X% with a specific value"
+    },
+    {
+      "section": "Customer Experience",
+      "feedback": "Missing user interaction detail",
+      "suggestion": "Describe what will improve for the user"
+    },
+    {
+      "section": "Objective",
+      "feedback": "Too verbose",
+      "suggestion": "Make it more concise"
+    }
+  ]
+}

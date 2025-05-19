@@ -1,0 +1,37 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.2/schema.json",
+    "schema_version": "v2.2",
+    "name_for_human": "Spec Assistant",
+    "description_for_human": "An AI agent to help you write, review, update specs",
+    "namespace": "spec_plugin",
+    "functions": [
+        {
+            "name": "SpecReviewer",
+            "description": "Review a spec and provide feedback"
+        },
+        {
+            "name": "SpecOrchestrator",
+            "description": "Write a spec given an artifact as input, and iterate until the spec is in good condition."
+        },
+        {
+            "name": "SpecUpdater",
+            "description": "Update the spec based on provided feedback"
+        }
+    ],
+    "runtimes": [
+        {
+            "type": "OpenApi",
+            "auth": {
+                "type": "None"
+            },
+            "spec": {
+                "url": "apiSpecificationFile/spec_api.json"
+            },
+            "run_for_functions": [
+                "SpecReviewer",
+                "SpecOrchestrator",
+                "SpecUpdater"
+            ]
+        }
+    ]
+}

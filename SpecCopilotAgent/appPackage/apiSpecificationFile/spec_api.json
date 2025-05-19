@@ -1,0 +1,135 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Spec Assistant",
+    "description": "API for reviewing, writing, and updating product specs",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://6e27-24-18-57-218.ngrok-free.app/api"
+    }
+  ],
+  "paths": {
+    "/SpecReviewer": {
+      "post": {
+        "description": "Review the spec (provided in markdown format) and provide feedback on it",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "spec": {
+                    "type": "string",
+                    "description": "Spec in markdown format"
+                  }
+                },
+                "required": ["spec"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reviewer feedback",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/SpecOrchestrator": {
+      "post": {
+        "summary": "Write a spec from artifact",
+        "description": "Generates a product spec from a text artifact",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "artifact": {
+                    "type": "string",
+                    "description": "Input artifact or notes for the spec"
+                  }
+                },
+                "required": ["artifact"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated spec text",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/SpecUpdater": {
+      "post": {
+        "summary": "Update a spec with feedback",
+        "description": "Takes an existing spec (in markdown format) and a list of reviewer feedback items and returns an updated spec",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "spec": {
+                    "type": "string",
+                    "description": "Markdown-formatted spec"
+                  },
+                  "feedback": {
+                    "type": "array",
+                    "description": "List of reviewer feedback items",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "section": { "type": "string" },
+                        "feedback": { "type": "string" },
+                        "suggestion": { "type": "string" }
+                      },
+                      "required": ["section", "feedback", "suggestion"]
+                    }
+                  }
+                },
+                "required": ["spec", "feedback"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated spec text",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  }
+}

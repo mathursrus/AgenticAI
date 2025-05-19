@@ -1,0 +1,44 @@
+Metadata-Version: 2.4
+Name: docx2markdown-custom
+Version: 1.0.1
+Summary: Convert .docx files to Markdown, preserving headings, paragraphs, and tables.
+Author: Sid Mathur
+Author-email: Sid Mathur <sid.mathur@gmail.com>
+License: MIT
+Project-URL: Homepage, https://pypi.org/project/docx2markdown-custom/
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: python-docx>=0.8.11
+Provides-Extra: test
+Requires-Dist: pytest; extra == "test"
+Provides-Extra: dynamic
+Requires-Dist: classifiers; extra == "dynamic"
+
+# docx2markdown_custom
+
+Convert .docx files to Markdown, preserving headings, paragraphs, and tables.
+
+## Installation
+
+```sh
+pip install docx2markdown_custom 
+```
+
+## Usage
+
+```python
+from docx2markdown_custom import docx_to_markdown_custom
+
+with open('your_file.docx', 'rb') as f:
+    docx_bytes = f.read()
+
+markdown = docx_to_markdown_custom(docx_bytes)
+print(markdown)
+```
+
+## Features
+- Converts headings, paragraphs, and tables from .docx to Markdown
+- Handles bold and italic text
+
+## License
+MIT 

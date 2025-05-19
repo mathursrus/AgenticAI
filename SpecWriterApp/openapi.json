@@ -1,0 +1,506 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Spec Writer API",
+    "description": "API for generating, reviewing, and updating software specifications through a series of AI-powered services. The API consists of six main endpoints:\n\n1. /SpecOrchestrator - Coordinates the entire spec writing process, handling both new spec creation and continuation of existing specs with answers to previous questions.\n2. /SpecWriter - Generates initial specification content from input requirements or artifacts.\n3. /SpecReviewer - Analyzes specifications and provides detailed feedback on areas needing improvement or clarification.\n4. /SpecInformationGatherer - Processes reviewer feedback to generate targeted questions for gathering missing information.\n5. /SpecUpdater - Updates specifications based on provided answers and direct updates.\n6. /SpecConverter - Converts specifications between different formats and structures.\n\nEach endpoint is designed to work together in a cohesive workflow for creating high-quality software specifications.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:7071/api",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/SpecOrchestrator": {
+      "post": {
+        "operationId": "SpecOrchestrator",
+        "summary": "Orchestrate the spec writing process",
+        "description": "Coordinates the entire spec writing process including initial generation, review cycles, information gathering, and updates. Can handle both new spec creation and continuation of existing specs with answers to previous questions.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "artifact": {
+                    "type": "string",
+                    "description": "Initial input text or requirements to generate the spec from"
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "Alternative input text field, used if artifact is not provided"
+                  },
+                  "spec": {
+                    "type": "string",
+                    "description": "Previous spec content when continuing an existing spec review process"
+                  },
+                  "answers": {
+                    "type": "array",
+                    "description": "Answers to previously asked questions",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "section": {
+                          "type": "string",
+                          "description": "The section of the spec this answer relates to"
+                        },
+                        "answer": {
+                          "type": "string",
+                          "description": "The user's answer to the question"
+                        }
+                      }
+                    }
+                  },
+                  "review_history": {
+                    "type": "array",
+                    "description": "History of previous review rounds",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "round": {
+                          "type": "integer",
+                          "description": "The review round number"
+                        },
+                        "feedback": {
+                          "type": "array",
+                          "description": "Feedback items from this review round",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response - either complete spec or questions needing answers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["complete", "incomplete"],
+                      "description": "Indicates if the spec is complete or needs more information"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Human-readable status message"
+                    },
+                    "final_spec": {
+                      "type": "string",
+                      "description": "The final generated spec content (when status is complete)"
+                    },
+                    "questions": {
+                      "type": "array",
+                      "description": "Questions that need to be answered (when status is incomplete)",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "section": {
+                            "type": "string",
+                            "description": "The section of the spec this question relates to"
+                          },
+                          "question": {
+                            "type": "string",
+                            "description": "The question that needs to be answered"
+                          }
+                        }
+                      }
+                    },
+                    "spec": {
+                      "type": "string",
+                      "description": "Current spec content (when status is incomplete)"
+                    },
+                    "review_history": {
+                      "type": "array",
+                      "description": "History of all review rounds"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required input",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SpecReviewer": {
+      "post": {
+        "operationId": "SpecReviewer",
+        "summary": "Review a specification",
+        "description": "Analyzes a specification and provides feedback on areas that need improvement or clarification",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "spec": {
+                    "type": "string",
+                    "description": "The specification content to review"
+                  }
+                },
+                "required": ["spec"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful review",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reviewer_feedback": {
+                      "type": "array",
+                      "description": "List of feedback items for the spec",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "section": {
+                            "type": "string",
+                            "description": "The section of the spec this feedback relates to"
+                          },
+                          "suggestion": {
+                            "type": "string",
+                            "description": "The suggested improvement or clarification"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SpecInformationGatherer": {
+      "post": {
+        "operationId": "SpecInformationGatherer",
+        "summary": "Gather required information",
+        "description": "Analyzes reviewer feedback and generates questions to gather missing information needed to improve the spec",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "spec": {
+                    "type": "string",
+                    "description": "The current specification content"
+                  },
+                  "feedback": {
+                    "type": "array",
+                    "description": "Feedback items from the reviewer",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "section": {
+                          "type": "string",
+                          "description": "The section of the spec this feedback relates to"
+                        },
+                        "suggestion": {
+                          "type": "string",
+                          "description": "The suggested improvement or clarification"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["spec", "feedback"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully generated questions and/or updates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "questions": {
+                      "type": "array",
+                      "description": "Questions that need to be answered to improve the spec",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "section": {
+                            "type": "string",
+                            "description": "The section of the spec this question relates to"
+                          },
+                          "question": {
+                            "type": "string",
+                            "description": "The question that needs to be answered"
+                          }
+                        }
+                      }
+                    },
+                    "updates": {
+                      "type": ["string", "object"],
+                      "description": "Direct updates that can be made to the spec without requiring additional information"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SpecUpdater": {
+      "post": {
+        "operationId": "SpecUpdater",
+        "summary": "Update a specification",
+        "description": "Updates a specification based on provided answers to questions and/or direct updates",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "spec": {
+                    "type": "string",
+                    "description": "The current specification content"
+                  },
+                  "answers": {
+                    "type": "array",
+                    "description": "Answers to questions about the spec",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "section": {
+                          "type": "string",
+                          "description": "The section of the spec this answer relates to"
+                        },
+                        "answer": {
+                          "type": "string",
+                          "description": "The provided answer"
+                        }
+                      }
+                    }
+                  },
+                  "updates": {
+                    "type": ["string", "object"],
+                    "description": "Direct updates to be made to the spec, either as a string or structured updates"
+                  }
+                },
+                "required": ["spec"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated spec",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "description": "The updated specification content"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SpecWriter": {
+      "post": {
+        "operationId": "SpecWriter",
+        "summary": "Generate initial specification",
+        "description": "Generates initial specification content from input requirements or artifacts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "artifact": {
+                    "type": "string",
+                    "description": "Initial input text or requirements to generate the spec from"
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "Alternative input text field, used if artifact is not provided"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully generated specification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "spec": {
+                      "type": "string",
+                      "description": "The generated specification content"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required input",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SpecConverter": {
+      "post": {
+        "operationId": "SpecConverter",
+        "summary": "Convert specification format",
+        "description": "Converts specifications from a document base 64 encoded file to the desired markdown",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base64_file": {
+                    "type": "string",
+                    "description": "The specification content in base 64 which needs to be converted"
+                  }
+                },
+                "required": ["base64_file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully converted specification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "converted_spec": {
+                      "type": "string",
+                      "description": "The converted specification content"
+                    },
+                    "format": {
+                      "type": "string",
+                      "description": "The format of the converted specification"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid format or missing required input",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+} 
