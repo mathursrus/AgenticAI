@@ -1,6 +1,7 @@
 # AgenticAI - Custom Function Endpoints with GPT Integration
 
 This repository contains a framework for creating custom Azure Functions endpoints and integrating them with GPT models. It includes a complete example implementation for a specification writing system, which can be used as a template for creating your own custom endpoints.
+This GPT will take any artifact (meeting notes, random thoughts, doc/deck, ...) and convert it into a PM spec, then run it through a Reviewer Agent to critique the spec, an Information Gatherer Agent to respond to the reviewer critique and get additional input from the user as needed, an Updater Agent to make the necessary changes, and then loop back with the Reviewer iteratively until the spec is done. 
 
 ## Project Structure
 
